@@ -387,7 +387,7 @@ error:
 
 gse_status_t gse_free_vfrag(gse_vfrag_t **vfrag)
 {
-  gse_status_t status;
+  gse_status_t status;  
 
   if(vfrag == NULL || *vfrag == NULL)
   {
@@ -777,6 +777,10 @@ error:
 static int gse_get_vfrag_nbr(gse_vfrag_t *vfrag)
 {
   if(vfrag == NULL)
+  {
+    return -1;
+  }
+  if(vfrag->vbuf == NULL)
   {
     return -1;
   }
