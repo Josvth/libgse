@@ -1121,6 +1121,7 @@ int tun2udp(gse_encap_t *encap,
       }
       frag_nbr++;
       /* release the fragment */
+      fprintf(stderr, "gse_free_vfrag 1125\n");
       ret = gse_free_vfrag(&vfrag_pkt);
       if(ret > GSE_STATUS_OK)
       {
@@ -1190,6 +1191,7 @@ int tun2udp(gse_encap_t *encap,
         }
         frag_nbr++;
         /* release the fragment */
+        fprintf(stderr, "gse_free_vfrag 1195: %p\n", refrag_pkt);
         ret = gse_free_vfrag(&refrag_pkt);
         if(ret > GSE_STATUS_OK)
         {
@@ -1206,6 +1208,7 @@ int tun2udp(gse_encap_t *encap,
     fprintf(stderr, "Two many errors when getting packet\n");
     goto free_vfrag_pdu;
   }
+
   if(frag_nbr > 1)
   {
     fprintf(stderr, "Send PDU #%u fragmented in %d GSE packets\n",
@@ -1220,6 +1223,7 @@ int tun2udp(gse_encap_t *encap,
   is_failure = 0;
 
 free_vfrag_pdu:
+  fprintf(stderr, "gse_free_vfrag 1226: %p\n", vfrag_pdu);
   gse_free_vfrag(&vfrag_pdu);
 error:
   return is_failure;

@@ -48,6 +48,7 @@
 
 #include "virtual_fragment.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -153,6 +154,7 @@ gse_status_t gse_create_vfrag(gse_vfrag_t **vfrag, size_t max_length,
 
   return status;
 free_vfrag:
+  fprintf(stderr, "free 158\n");
   free(*vfrag);
 free_vbuf:
   gse_free_vbuf(vbuf);
@@ -286,8 +288,10 @@ gse_status_t gse_create_vfrag_from_buf(gse_vfrag_t **vfrag, unsigned char *buffe
 
   return status;
 free_vfrag:
+  fprintf(stderr, "free 292\n");
   free(*vfrag);
 free_vbuf:
+  fprintf(stderr, "free 295\n");
   free(vbuf);
 error:
   if(vfrag != NULL)
@@ -332,6 +336,7 @@ gse_status_t gse_allocate_vfrag(gse_vfrag_t **vfrag, int alloc_vbuf)
   return status;
     
 free_vbuf:
+  fprintf(stderr, "free 340\n");
   free(vbuf);
 error:
   if(vfrag != NULL)
@@ -415,7 +420,11 @@ gse_status_t gse_free_vfrag(gse_vfrag_t **vfrag)
   status = GSE_STATUS_OK;
 
 free_vfrag:
-  free(*vfrag);
+  if (*vfrag != NULL)
+  {
+    fprintf(stderr, "free 424 %p %p\n", vfrag, *vfrag);
+    free(*vfrag);
+  }
   *vfrag = NULL;
 error:
   return status;
@@ -445,10 +454,11 @@ gse_status_t gse_free_vfrag_no_alloc(gse_vfrag_t **vfrag, int reset, int free_vb
   {
     if(free_vbuf)
     {
+      fprintf(stderr, "free 455\n");
       free((*vfrag)->vbuf);
       (*vfrag)->vbuf = NULL;
     }
-   
+    fprintf(stderr, "free 459\n");
     free(*vfrag);
     *vfrag = NULL;
   }
@@ -508,6 +518,7 @@ gse_status_t gse_duplicate_vfrag(gse_vfrag_t **vfrag, gse_vfrag_t *father,
 
   return status;
 free_vfrag:
+  fprintf(stderr, "free 519\n");
   free(*vfrag);
 error:
   if(vfrag != NULL)
@@ -741,6 +752,7 @@ gse_status_t gse_reallocate_vfrag(gse_vfrag_t *vfrag, size_t start_offset,
   memcpy(new_ptr + start_offset, vfrag->start,
          MIN(max_length + head_offset - start_offset, vfrag->length));
 
+  fprintf(stderr, "free 752\n");
   free(vfrag->vbuf->start);
   /* update the buffer */
   vfrag->vbuf->start = new_ptr;
@@ -813,6 +825,7 @@ static gse_status_t gse_create_vbuf(gse_vbuf_t **vbuf, size_t length)
 
   return status;
 free_vbuf:
+  fprintf(stderr, "free 826\n");
   free(*vbuf);
   *vbuf = NULL;
 error:
@@ -831,8 +844,11 @@ static gse_status_t gse_free_vbuf(gse_vbuf_t *vbuf)
     status = GSE_STATUS_FRAG_NBR;
     goto error;
   }
+  fprintf(stderr, "free 845 %p\n", vbuf->start);
   free(vbuf->start);
-  free(vbuf);
+  //fprintf(stderr, "free 847 %p\n", vbuf);
+  //free(vbuf);
+  //vbuf = NULL;
 
 error:
   return status;
